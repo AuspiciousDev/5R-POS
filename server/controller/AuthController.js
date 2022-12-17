@@ -1,7 +1,7 @@
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const createToken = require("../helper/createToken");
+const sendMail = require("../helper/sendMail");
 const authController = {
   handleLogin: async (req, res) => {
     try {
@@ -21,11 +21,12 @@ const authController = {
               userType: foundUser.userType,
             },
           };
+          const firstName = foundUser.firstName;
+          const lastName = foundUser.lastName;
           const accessToken = createToken.access(userObject);
           const refreshToken = createToken.refresh({
             username: foundUser.username,
           });
-       
 
           // Saving RefreshToken with Current User
           foundUser.refreshToken = refreshToken;
@@ -40,7 +41,12 @@ const authController = {
           });
           // res.json({ sucess: `Users ${user} is logged in!` });
 
-          res.json({ userType: foundUser.userType, accessToken });
+          res.json({
+            userType: foundUser.userType,
+            accessToken,
+            firstName,
+            lastName,
+          });
         } else {
           res.status(401).json({ message: "Invalid Username/Password!" });
         }
@@ -51,6 +57,77 @@ const authController = {
         error
       );
       res.status(500).json({ message: error.message });
+    }
+  },
+  forgotPassword: async (req, res) => {
+    try {
+      //get email
+      const { email } = req.body;
+      console.log(
+        "🚀 ~ file: AuthController.js:59 ~ forgotPassword: ~ email",
+        email
+      );
+      //check email
+      const user = await User.findOne({ email });
+      if (!user)
+        return res.status(400).json({ message: "This email does not exists!" });
+      if (user?.status === false) {
+        return res.status(401).json({
+          message:
+            "Cannot request forgot password, Your account has been disabled!",
+        }); //Unauth
+      }
+      //create access token
+      const accessToken = createToken.access({ username: user.username });
+      console.log("BASE URL:", process.env.BASE_URL);
+      console.log("BASE EMAIL:", process.env.ADMIN_EMAIL);
+      //send email
+      const url = `${process.env.BASE_URL}/#/auth/forgot-password/${accessToken}`;
+      const name = user.username;
+      sendMail.sendEmailReset(email, url, "Reset your password", name);
+
+      //success
+      res.status(200).json({
+        message:
+          "Password reset token has been sent, Please check your inbox or spam email.",
+      });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+      console.log(error);
+    }
+  },
+  resetPassword: async (req, res) => {
+    try {
+      //get password
+      const { password } = req.body;
+      //hash password
+      const salt = await bcrypt.genSalt();
+      const hashPassword = await bcrypt.hash(password, salt);
+      //update password
+      const foundUser = await User.findOne({
+        username: req.user.username,
+      }).exec();
+      if (!foundUser)
+        return res.status(404).json({ message: "Invalid Username/Password!" }); //Unauth
+      const compareOldNew = await bcrypt.compare(password, foundUser.password);
+      if (compareOldNew)
+        return res.status(400).json({
+          message: `Current and New password is just the same!, Use a new password instead.`,
+        });
+      await User.findOneAndUpdate(
+        {
+          username: req.user.username,
+        },
+        {
+          password: hashPassword,
+        }
+      );
+      //reset success
+      res.status(200).json({ message: "Password reset successfully!" });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: error.message });
+      console.log(error);
     }
   },
 };

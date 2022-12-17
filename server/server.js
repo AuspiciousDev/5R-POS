@@ -42,10 +42,13 @@ app.use(cookieParser());
 //serve static files
 app.use(express.static(path.resolve(__dirname, "public")));
 
-// Require JWT Token to access data
-// app.use(verifyJWT);
 app.use("/auth", require("./routes/auth"));
+app.use("/refresh", require("./routes/refresh"));
+app.use("/logout", require("./routes/logout"));
 
+// Require JWT Token to access data
+app.use(verifyJWT);
+// Private routes
 app.use("/api/users", require("./routes/api/usersRoute"));
 app.use("/api/inventory", require("./routes/api/inventoryRoute"));
 app.use("/api/restock", require("./routes/api/restocksRoute"));
