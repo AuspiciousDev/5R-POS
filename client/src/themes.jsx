@@ -128,7 +128,6 @@ export const themeSettings = (mode) => {
     typography: {
       fontFamily: ["Poppins", "sans-serif"].join(","),
       fontSize: 13,
-      fontWeight: 400,
       h1: {
         fontFamily: ["Poppins", "sans-serif"].join(","),
         fontSize: 40,

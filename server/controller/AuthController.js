@@ -9,8 +9,15 @@ const authController = {
 
       const foundUser = await User.findOne({ username }).exec();
       if (!foundUser) {
-        res.status(401).json({ message: "Invalid Username or Password!" });
-      } else {
+        return res
+          .status(401)
+          .json({ message: "Invalid Username or Password!" });
+      }
+      if (foundUser.status === false)
+        return res
+          .status(401)
+          .json({ message: "Your account has been disabled!" });
+      else {
         const match = await bcrypt.compare(password, foundUser.password);
 
         if (match) {

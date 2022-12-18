@@ -8,7 +8,7 @@ const NotFound404 = () => {
   const colors = tokens(theme.palette.mode);
 
   const navigate = useNavigate();
-  const goBack = () => navigate("/");
+  const goBack = () => navigate(-1);
   return (
     <Box
       display="flex"

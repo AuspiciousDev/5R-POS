@@ -8,7 +8,9 @@ const sendMail = require("../helper/sendMail");
 const UserController = {
   createUser: async (req, res) => {
     let emptyFields = [];
+    let duplicateFields = [];
     let password, hashedPassword;
+    console.log(req.body);
     try {
       // Get users details
       const {
@@ -37,17 +39,18 @@ const UserController = {
           .status(400)
           .json({ message: "Please fill in all the fields", emptyFields });
       // Check Duplicates
-      const duplicate = await User.findOne({ username }).lean().exec();
-      if (duplicate)
+      const duplicateUsername = await User.findOne({ username }).lean().exec();
+
+      const duplicateEmail = await User.findOne({ email }).lean().exec();
+      if (duplicateUsername) duplicateFields.push("username");
+      if (duplicateEmail) duplicateFields.push("email");
+      if (duplicateFields.length > 0)
         return res
           .status(409)
-          .json({ message: `Username [${username}] already registered!` });
-      const duplicateEmail = await User.findOne({ username }).lean().exec();
-      if (duplicateEmail)
-        return res
-          .status(409)
-          .json({ message: `Email [${email}] already registered!` });
-      // Generate password
+          .json({
+            message: `Existing [${duplicateFields}] `,
+            duplicateFields,
+          });
       password = generatePassword();
       console.log(
         "🚀 ~ file: UserController.js:42 ~ createUser: ~ password",

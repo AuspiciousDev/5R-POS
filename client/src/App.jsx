@@ -23,14 +23,16 @@ import RequireAuth from "./pages/components/RequireAuth";
 // * ADMIN ROUTES
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
-import Cashier from "./pages/admin/Cashier";
-import Inventory from "./pages/admin/Inventory";
+import Cashier from "./pages/admin/Cashier/Cashier";
+import Inventory from "./pages/admin/Inventory/Inventory";
+import InventoryAdd from "./pages/admin/Inventory/InventoryAdd";
+
 import Employee from "./pages/admin/Employee/Employee";
 import EmployeeAdd from "./pages/admin/Employee/EmployeeAdd";
 
-import Restock from "./pages/admin/Restock";
-import Sales from "./pages/admin/Sales";
-import Archived from "./pages/admin/Archived";
+import Restock from "./pages/admin/Restock/Restock";
+import Sales from "./pages/admin/Sales/Sales";
+import Archived from "./pages/admin/Archived/Archived";
 
 // * EMPLOYEE ROUTES
 import EmployeeLayout from "./pages/employee/EmployeeLayout";
@@ -63,6 +65,7 @@ const App = () => {
                   <Route index element={<Dashboard />} />
                   <Route path="cashier" element={<Cashier />} />
                   <Route path="inventory" element={<Inventory />} />
+                  <Route path="inventory/add" element={<InventoryAdd />} />
                   <Route path="employee" element={<Employee />} />
                   <Route path="employee/add" element={<EmployeeAdd />} />
                   <Route path="restock" element={<Restock />} />
