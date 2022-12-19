@@ -31,6 +31,12 @@ const schema = new Schema(
       type: Number,
       required: true,
     },
+    discountAmount: {
+      type: Number,
+    },
+    vatAmount: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

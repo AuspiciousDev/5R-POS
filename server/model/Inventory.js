@@ -30,6 +30,10 @@ const schema = new Schema(
       type: String,
       required: true,
     },
+    necessity: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: Boolean,
       default: true,

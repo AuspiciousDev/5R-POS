@@ -1,17 +1,19 @@
 const Sale = require("../model/Sale");
+const Inventory = require("../model/Inventory");
 
 const saleController = {
   createSale: async (req, res) => {
     let emptyFields = [];
     try {
-      const { transactor, items, totalSum } = req.body;
+      const { transactor, items, totalSum, discountAmount, vatAmount } =
+        req.body;
       console.log(
         "🚀 ~ file: SaleController.js:8 ~ createSale: ~ req.body;",
         req.body
       );
 
       if (!transactor) emptyFields.push("transactor");
-      if (!items) emptyFields.push("transactor");
+      if (!items) emptyFields.push("items");
       if (!totalSum) emptyFields.push("totalSum");
       if (emptyFields.length > 0)
         return res
@@ -21,12 +23,51 @@ const saleController = {
       const productObject = {
         transactor,
         items,
-        totalSum,
+        totalSum: totalSum?.toFixed(2),
+        discountAmount: discountAmount?.toFixed(2),
+        vatAmount: vatAmount?.toFixed(2),
       };
-
       const createProduct = await Sale.create(productObject);
+      console.log(
+        "🚀 ~ file: SaleController.js:31 ~ createSale: ~ createProduct",
+        createProduct
+      );
+
+      let bulkTags = [];
+      items.forEach(async (tag) => {
+        bulkTags.push({
+          updateOne: {
+            filter: {
+              _id: tag.productID,
+              productName: tag.productName,
+            },
+            update: {
+              $inc: {
+                quantity: -tag.quantity,
+              },
+            },
+            upsert: true,
+          },
+        });
+      });
+
+      Inventory.bulkWrite(bulkTags, (error, result) => {
+        if (error) {
+          res.status(400).json({ message: error.message });
+        } else {
+          console.log(
+            "🚀 ~ file: SaleController.js:53 ~ Inventory.bulkWrite ~ result",
+            result
+          );
+        }
+      });
+
       res.status(201).json(createProduct);
     } catch (error) {
+      console.log(
+        "🚀 ~ file: SaleController.js:49 ~ createSale: ~ error",
+        error
+      );
       res.status(500).json({ message: error.message });
     }
   },
@@ -74,11 +115,19 @@ const saleController = {
       return res.status(400).json({ message: `Invalid Transaction ID!` });
     }
     const transactionID = req.params.transactionID;
+    console.log(
+      "🚀 ~ file: SaleController.js:80 ~ deleteSale: ~ transactionID",
+      transactionID
+    );
     try {
       const transaction = await Sale.findOne({ transactionID }).exec();
       if (!transaction)
         return res.status(204).json({ message: "Transaction ID not found!" });
       const deleteItem = await transaction.deleteOne({ transactionID });
+      console.log(
+        "🚀 ~ file: SaleController.js:85 ~ deleteSale: ~ deleteItem",
+        deleteItem
+      );
       res.json(deleteItem);
     } catch (error) {
       console.log(

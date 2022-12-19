@@ -22,12 +22,12 @@ export const restocksReducer = (state, action) => {
 };
 
 export const RestocksContextProvider = ({ children }) => {
-  const [state, restocksDispatch] = useReducer(restocksReducer, {
+  const [state, restockDispatch] = useReducer(restocksReducer, {
     restocks: null,
   });
 
   return (
-    <RestocksContext.Provider value={{ ...state, restocksDispatch }}>
+    <RestocksContext.Provider value={{ ...state, restockDispatch }}>
       {children}
     </RestocksContext.Provider>
   );

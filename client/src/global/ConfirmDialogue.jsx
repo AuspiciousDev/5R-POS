@@ -34,11 +34,12 @@ const ConfirmDialogue = (props) => {
           <ErrorOutlineOutlinedIcon
             sx={{ fontSize: "100px", color: colors.secondary[500] }}
           />
-          <Typography variant="h3">Confirm Changes!</Typography>
+          <Typography variant="h3">
+            {confirmDialog?.title || "Confirm Actions!"}
+          </Typography>
         </Box>
       </DialogTitle>
       <DialogContent sx={{ margin: "0 20px" }}>
-        <Typography variant="h4">{confirmDialog.title}</Typography>
         <Typography variant="h5">{confirmDialog.message}</Typography>
       </DialogContent>
       <DialogActions

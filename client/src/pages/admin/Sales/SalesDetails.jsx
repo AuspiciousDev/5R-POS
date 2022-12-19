@@ -29,8 +29,7 @@ import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { useEffect, useState } from "react";
 import { format } from "date-fns-tz";
 
-import { useInventoriesContext } from "../../../hooks/useInventoriesContext";
-import { useRestocksContext } from "../../../hooks/useRestocksContext";
+import { useSalesContext } from "../../../hooks/useSalesContext";
 
 import { darken, lighten } from "@mui/material/styles";
 
@@ -52,14 +51,13 @@ function CustomToolbar() {
     </GridToolbarContainer>
   );
 }
-const Restock = () => {
+const SalesDetails = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
   const axiosPrivate = useAxiosPrivate();
-  const { inventory, inventoryDispatch } = useInventoriesContext();
-  const { restocks, restockDispatch } = useRestocksContext();
+  const { sales, salesDispatch } = useSalesContext();
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -86,50 +84,37 @@ const Restock = () => {
   const columns = [
     {
       field: "_id",
-      headerName: "Restock ID",
+      headerName: "Transaction ID",
       width: 180,
     },
     {
-      field: "productID",
-      headerName: "Product ID",
+      field: "transactor",
+      headerName: "Transactor",
       width: 150,
     },
     {
-      field: "quantity",
-      headerName: "Quantity",
+      field: "totalSum",
+      headerName: "Total Sales",
       width: 150,
+      renderCell: (params) => {
+        return <> {"Php " + params.value}</>;
+      },
     },
     {
-      field: "restockBy",
-      headerName: "Restock By",
+      field: "discountAmount",
+      headerName: "Discount Amount",
       width: 150,
     },
 
     {
-      field: "supplier",
-      headerName: "Supplier",
+      field: "vatAmount",
+      headerName: "Vat Amount",
       width: 150,
     },
 
-    {
-      field: "expiredOn",
-      headerName: "Expiry Date",
-      width: 150,
-      valueFormatter: (params) =>
-        params?.value === "n/a"
-          ? "N/A"
-          : format(new Date(params?.value), "MMMM dd, yyyy"),
-    },
-    {
-      field: "deliveryDate",
-      headerName: "Expiry Date",
-      width: 150,
-      valueFormatter: (params) =>
-        format(new Date(params?.value), "MMMM dd, yyyy"),
-    },
     {
       field: "createdAt",
-      headerName: "Restock Date",
+      headerName: "Transaction Date",
       width: 150,
       valueFormatter: (params) =>
         format(new Date(params?.value), "MMMM dd, yyyy"),
@@ -140,11 +125,11 @@ const Restock = () => {
     const getData = async () => {
       try {
         setLoadingDialog({ isOpen: true });
-        const response = await axiosPrivate.get("/api/restock/allRestocks");
+        const response = await axiosPrivate.get("/api/sales/allSales");
         if (response.status === 200) {
           const json = await response.data;
-          console.log("🚀 ~ file: Restock.jsx:160 ~ getData ~ json", json);
-          restockDispatch({ type: "SET_RESTOCKS", payload: json });
+          console.log("🚀 ~ file: Sales.jsx:144 ~ getData ~ json", json);
+          salesDispatch({ type: "SET_SALES", payload: json });
         }
         setLoadingDialog({ isOpen: false });
       } catch (error) {
@@ -222,26 +207,8 @@ const Restock = () => {
             }}
             fontWeight="700"
           >
-            Restocks
+            Sales
           </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "end",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              sx={{ height: "100%", color: "white" }}
-              variant="contained"
-              startIcon={<Inventory2Outlined />}
-              onClick={() => {
-                navigate("add");
-              }}
-            >
-              <Typography> Restock Product</Typography>
-            </Button>
-          </Box>
         </Box>
         <Box
           sx={{
@@ -260,7 +227,7 @@ const Restock = () => {
           }}
         >
           <DataGrid
-            rows={restocks ? restocks : []}
+            rows={sales ? sales : []}
             getRowId={(row) => row?._id}
             columns={columns}
             pageSize={page}
@@ -278,11 +245,8 @@ const Restock = () => {
             initialState={{
               columns: {
                 columnVisibilityModel: {
-                  _id: false,
-                  createdAt: false,
-                  address: false,
-                  action: false,
-                  necessity: false,
+                  vatAmount: false,
+                  discountAmount: false,
                 },
               },
             }}
@@ -296,4 +260,4 @@ const Restock = () => {
   );
 };
 
-export default Restock;
+export default SalesDetails;

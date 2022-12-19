@@ -186,7 +186,7 @@ const EmployeeAdd = () => {
             Create new employee
           </Typography>
         </Box>
-        <Divider sx={{ m: "1em 0" }} />
+        <Divider sx={{ marginBottom: "1em " }} />
         <Box sx={{ height: "100%" }}>
           <form onSubmit={handleSubmit} style={{ width: "100%" }}>
             <Typography

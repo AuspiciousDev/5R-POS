@@ -6,13 +6,16 @@ import "./index.css";
 import { UsersContextProvider } from "./context/UserContext";
 import { InventoryContextProvider } from "./context/InventoryContext";
 import { RestocksContextProvider } from "./context/RestockContext";
+import { SalesContextProvider } from "./context/SaleContext";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <UsersContextProvider>
         <InventoryContextProvider>
           <RestocksContextProvider>
-            <App />
+            <SalesContextProvider>
+              <App />
+            </SalesContextProvider>
           </RestocksContextProvider>
         </InventoryContextProvider>
       </UsersContextProvider>

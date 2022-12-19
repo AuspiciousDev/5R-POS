@@ -13,6 +13,7 @@ const inventoryController = {
         category,
         supplier,
         expiredOn,
+        necessity,
       } = req.body;
       // Validate if empty fields
       if (!productName) emptyFields.push("productName");
@@ -34,12 +35,13 @@ const inventoryController = {
 
       const productObject = {
         productName,
-        price,
+        price: price.toFixed(2),
         quantity,
         brand,
         category,
         supplier,
         expiredOn,
+        necessity,
       };
       const createProduct = await Inventory.create(productObject);
       res.status(201).json(createProduct);
@@ -96,6 +98,7 @@ const inventoryController = {
         category,
         supplier,
         expiredOn,
+        necessity,
       } = req.body;
       const update = await Inventory.findOneAndUpdate(
         { _id },
@@ -107,6 +110,7 @@ const inventoryController = {
           category,
           supplier,
           expiredOn,
+          necessity,
         }
       );
       if (!update) {

@@ -1,4 +1,5 @@
 const Restock = require("../model/Restock");
+const Inventory = require("../model/Inventory");
 
 const restockController = {
   createRestock: async (req, res) => {
@@ -31,6 +32,21 @@ const restockController = {
         supplier,
       };
       const createRestock = await Restock.create(restockObj);
+      const updateInventory = await Inventory.findOneAndUpdate(
+        { _id: productID },
+        {
+          $inc: {
+            quantity: quantity,
+          },
+          expiredOn,
+          supplier,
+        },
+        { new: true }
+      );
+      console.log(
+        "🚀 ~ file: RestockController.js:43 ~ createRestock: ~ updateInventory",
+        updateInventory
+      );
       res.status(201).json(createRestock);
     } catch (error) {
       console.log(
@@ -116,7 +132,7 @@ const restockController = {
     if (!req?.params?._id)
       return res.status(400).json({ message: `_id is required!` });
     if (req.params._id.length !== 24) {
-      return res.status(400).json({ message: `Invalid product _id!` });
+      return res.status(400).json({ message: `Invalid Restock _id!` });
     }
     const _id = req.params._id;
     try {

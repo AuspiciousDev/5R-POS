@@ -30,6 +30,11 @@ import { format } from "date-fns-tz";
 
 import { useInventoriesContext } from "../../../hooks/useInventoriesContext";
 
+import { darken, lighten } from "@mui/material/styles";
+
+const getHoverBackgroundColor = (color, mode) =>
+  mode === "dark" ? darken(color, 0.5) : lighten(color, 0.5);
+
 function CustomToolbar() {
   return (
     <GridToolbarContainer>
@@ -129,11 +134,44 @@ const Inventory = () => {
         format(new Date(params?.value), "MMMM dd, yyyy"),
     },
     {
+      field: "necessity",
+      headerName: "Necessity",
+      width: 150,
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => {
+        return (
+          <>
+            {params?.value === true ? (
+              <Paper sx={{ display: "flex", padding: "0.25em 0.5em", gap: 1 }}>
+                <CheckCircle
+                  sx={{
+                    color: "green",
+                  }}
+                />
+                <Typography>Discount</Typography>
+              </Paper>
+            ) : (
+              <Paper sx={{ display: "flex", padding: "0.25em 0.5em", gap: 1 }}>
+                <Cancel
+                  sx={{
+                    color: "red",
+                  }}
+                />
+                <Typography> None</Typography>
+              </Paper>
+            )}
+          </>
+        );
+      },
+    },
+    {
       field: "status",
       headerName: "Status",
       width: 150,
       headerAlign: "center",
       align: "center",
+      sortable: false,
       renderCell: (params) => {
         return (
           <>
@@ -183,6 +221,7 @@ const Inventory = () => {
       sortable: false,
       headerAlign: "center",
       align: "center",
+      sortable: false,
       renderCell: (params) => {
         return (
           <IconButton
@@ -437,7 +476,22 @@ const Inventory = () => {
             </Button>
           </Box>
         </Box>
-        <Box sx={{ height: "100%" }}>
+        <Box
+          sx={{
+            height: "100%",
+            width: "100%",
+            "& .super-app-theme--Low": {
+              bgcolor: "#F68181",
+              "&:hover": {
+                bgcolor: (theme) =>
+                  getHoverBackgroundColor(
+                    theme.palette.warning.main,
+                    theme.palette.mode
+                  ),
+              },
+            },
+          }}
+        >
           <DataGrid
             rows={
               inventory
@@ -446,7 +500,7 @@ const Inventory = () => {
                   })
                 : []
             }
-            getRowId={(row) => row._id}
+            getRowId={(row) => row?._id}
             columns={columns}
             pageSize={page}
             onPageSizeChange={(newPageSize) => setPage(newPageSize)}
@@ -467,19 +521,16 @@ const Inventory = () => {
                   createdAt: false,
                   address: false,
                   action: false,
+                  necessity: false,
                 },
               },
             }}
             components={{
               Toolbar: CustomToolbar,
             }}
-            onSelectionModelChange={(ids) => {
-              const selectedIDs = new Set(ids);
-              const selectedRowData = inventory.filter((row) =>
-                selectedIDs.has(row._id.toString())
-              );
-              console.log(selectedRowData[0]._id);
-            }}
+            getRowClassName={(params) =>
+              `super-app-theme--${params.row.quantity > 20 ? "High" : "Low"}`
+            }
           />
         </Box>
       </Paper>

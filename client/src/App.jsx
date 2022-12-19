@@ -37,6 +37,7 @@ import Archived from "./pages/admin/Archived/Archived";
 // * EMPLOYEE ROUTES
 import EmployeeLayout from "./pages/employee/EmployeeLayout";
 import EmpDashboard from "./pages/employee/EmpDashboard";
+import RestockAdd from "./pages/admin/Restock/RestockAdd";
 EmployeeLayout;
 const USER_TYPE = {
   ADMIN: "admin",
@@ -69,6 +70,7 @@ const App = () => {
                   <Route path="employee" element={<Employee />} />
                   <Route path="employee/add" element={<EmployeeAdd />} />
                   <Route path="restock" element={<Restock />} />
+                  <Route path="restock/add" element={<RestockAdd />} />
                   <Route path="sales" element={<Sales />} />
                   <Route path="archived" element={<Archived />} />
                 </Route>

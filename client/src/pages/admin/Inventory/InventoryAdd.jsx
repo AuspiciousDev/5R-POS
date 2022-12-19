@@ -45,8 +45,10 @@ const InventoryAdd = () => {
   const [categoryList, setCategoryList] = useState([]);
   const [supplier, setSupplier] = useState("");
   const [supplierList, setSupplierList] = useState([]);
-  const [expiredOn, setExpiredOn] = useState("");
+  const [expiredOn, setExpiredOn] = useState(null);
   const [productNameError, setProductNameError] = useState(false);
+  const [necessity, setNecessity] = useState(false);
+
   const [isFood, setIsFood] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -70,6 +72,9 @@ const InventoryAdd = () => {
   const toggleIsFood = () => {
     setIsFood((prev) => !prev);
   };
+  const toggleIsNecessity = () => {
+    setNecessity((prev) => !prev);
+  };
   const clearFields = () => {
     setProductName("");
     setPrice("");
@@ -78,8 +83,9 @@ const InventoryAdd = () => {
     setCategory("");
     setNewCategory("");
     setSupplier("");
-    setExpiredOn("");
+    setExpiredOn(null);
     setIsFood(false);
+    setNecessity(false);
   };
   useEffect(() => {
     const getData = async () => {
@@ -156,6 +162,7 @@ const InventoryAdd = () => {
         category: finalCategory,
         supplier,
         expiredOn: expiredOnTemp,
+        necessity,
       };
       const sendData = await axiosPrivate.post(
         `/api/inventory/create`,
@@ -180,23 +187,6 @@ const InventoryAdd = () => {
         });
       } else if (error.response.status === 400) {
         console.log(error.response.data.message);
-        setErrorDialog({
-          isOpen: true,
-          message: `${error.response.data.message}`,
-        });
-      } else if (error.response.status === 409) {
-        console.log(error.response.data.duplicateFields);
-        const duplicateFields = error.response.data.duplicateFields;
-        console.log(
-          "🚀 ~ file: EmployeeAdd.jsx:119 ~ handleSubmit ~ duplicateFields",
-          duplicateFields
-        );
-        if (duplicateFields.includes("username")) {
-          setUsernameError(true);
-        }
-        if (duplicateFields.includes("email")) {
-          setEmailError(true);
-        }
         setErrorDialog({
           isOpen: true,
           message: `${error.response.data.message}`,
@@ -362,7 +352,6 @@ const InventoryAdd = () => {
                   </Select>
                 </FormControl>
               )}
-
               <TextField
                 required
                 label="Supplier"
@@ -374,7 +363,6 @@ const InventoryAdd = () => {
                   setSupplier(e.target.value);
                 }}
               />
-
               <Box
                 sx={{
                   display: "flex",
@@ -395,6 +383,7 @@ const InventoryAdd = () => {
                           error={false}
                           required
                           disabled
+                          fullWidth
                           {...params}
                         />
                       )}
@@ -408,6 +397,7 @@ const InventoryAdd = () => {
                     display: "flex",
                     alignItems: "center",
                     height: "4em",
+                    width: "100%",
                   }}
                 >
                   <Checkbox
@@ -420,7 +410,27 @@ const InventoryAdd = () => {
                   <Typography variant="h5">No expiration</Typography>
                 </Box>
               </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  height: "4em",
+                  width: "100%",
+                }}
+              >
+                <Checkbox
+                  checked={necessity}
+                  onChange={toggleIsNecessity}
+                  sx={{ height: "5px", width: "5px", mr: 1 }}
+                  color="primary"
+                />
+
+                <Typography variant="h5">
+                  Necessity (Discountable for Senior Citizen or PWDs)
+                </Typography>
+              </Box>
             </Box>
+
             <Box
               sx={{
                 display: "flex",
