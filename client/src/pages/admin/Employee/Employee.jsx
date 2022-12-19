@@ -13,6 +13,7 @@ import {
   CheckCircle,
   Cancel,
   Delete,
+  Edit,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, GridToolbar, GridToolbarContainer } from "@mui/x-data-grid";
@@ -185,13 +186,22 @@ const Employee = () => {
       align: "center",
       renderCell: (params) => {
         return (
-          <IconButton
-            onClick={(event) => {
-              handleCellClick(event, params);
-            }}
-          >
-            <Delete sx={{ color: "red" }} />
-          </IconButton>
+          <>
+            <IconButton
+              onClick={(event) => {
+                handleCellEditClick(event, params);
+              }}
+            >
+              <Edit sx={{ color: colors.black[100] }} />
+            </IconButton>
+            <IconButton
+              onClick={(event) => {
+                handleCellClick(event, params);
+              }}
+            >
+              <Delete sx={{ color: "red" }} />
+            </IconButton>
+          </>
         );
       },
     },
@@ -203,6 +213,18 @@ const Employee = () => {
         format(new Date(params?.value), "MMMM dd, yyyy"),
     },
   ];
+  const handleCellEditClick = (event, params) => {
+    event.stopPropagation();
+
+    setConfirmDialog({
+      isOpen: true,
+      title: `Are you sure to edit employee `,
+      message: `[${params?.row?.username}]`,
+      onConfirm: () => {
+        navigate(`edit/${params?.row.username}`);
+      },
+    });
+  };
   const handleCellClick = (event, params) => {
     event.stopPropagation();
 

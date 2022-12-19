@@ -127,7 +127,7 @@ const Sales = () => {
       isOpen: true,
       message: `View ${_id} sale details?`,
       onConfirm: () => {
-        navigate(`details/${_id}`);
+        navigate(`${_id}`);
       },
     });
   };
@@ -269,7 +269,7 @@ const Sales = () => {
               const selectedRowData = sales.filter((row) =>
                 selectedIDs.has(row._id.toString())
               );
-              viewSalesDetails(selectedRowData[0]._id);
+              viewSalesDetails(selectedRowData[0].transactionID);
               setSelectedSales(selectedRowData[0]._id);
               console.log(selectedRowData[0]._id);
             }}

@@ -35,7 +35,7 @@ const inventoryController = {
 
       const productObject = {
         productName,
-        price: price.toFixed(2),
+        price,
         quantity,
         brand,
         category,

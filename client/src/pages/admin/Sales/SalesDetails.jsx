@@ -7,6 +7,7 @@ import {
   useTheme,
   IconButton,
   ButtonBase,
+  Divider,
 } from "@mui/material";
 import { tokens } from "../../../themes";
 import {
@@ -17,8 +18,9 @@ import {
   Fastfood,
   FastfoodOutlined,
   Inventory2Outlined,
+  ArrowRight,
 } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { DataGrid, GridToolbar, GridToolbarContainer } from "@mui/x-data-grid";
 
 import LoadingDialogue from "../../../global/LoadingDialogue";
@@ -52,12 +54,13 @@ function CustomToolbar() {
   );
 }
 const SalesDetails = () => {
+  const { _id } = useParams();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const navigate = useNavigate();
 
   const axiosPrivate = useAxiosPrivate();
-  const { sales, salesDispatch } = useSalesContext();
+  const [saleDetails, setSalesDetails] = useState([]);
+  const [itemsDetails, setItemsDetails] = useState([]);
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -84,52 +87,130 @@ const SalesDetails = () => {
   const columns = [
     {
       field: "_id",
-      headerName: "Transaction ID",
+      headerName: "_id",
       width: 180,
     },
     {
-      field: "transactor",
-      headerName: "Transactor",
+      field: "productID",
+      headerName: "Product ID",
       width: 150,
     },
     {
-      field: "totalSum",
-      headerName: "Total Sales",
-      width: 150,
-      renderCell: (params) => {
-        return <> {"Php " + params.value}</>;
-      },
-    },
-    {
-      field: "discountAmount",
-      headerName: "Discount Amount",
+      field: "productName",
+      headerName: "Product Name",
       width: 150,
     },
-
     {
-      field: "vatAmount",
-      headerName: "Vat Amount",
+      field: "quantity",
+      headerName: "Quantity",
       width: 150,
     },
-
     {
-      field: "createdAt",
-      headerName: "Transaction Date",
+      field: "price",
+      headerName: "Price",
       width: 150,
-      valueFormatter: (params) =>
-        format(new Date(params?.value), "MMMM dd, yyyy"),
     },
   ];
-
+  const SetSalesDetails = (val) => {
+    return (
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 2,
+          "& > .MuiPaper-root": {
+            p: 1,
+            boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
+          },
+          "> .MuiPaper-root:hover": {
+            transition: "0.3s",
+            transform: "scale(1.01)",
+            filter: `drop-shadow(0 0.5em 1em ${colors.secondary[500]})`,
+          },
+          "& .headers": {
+            paddingLeft: "0.3em",
+            m: "10px 0 25px 0",
+            fontSize: "18pt",
+            fontWeight: 600,
+          },
+          "& .details": {
+            m: "10px 0 10px 0",
+            fontSize: "14pt",
+          },
+          "& .details .MuiBox-root": {
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          },
+        }}
+      >
+        <Paper sx={{ borderLeft: `solid 25px ${colors.primary[500]}` }}>
+          <Typography className="headers">Transaction ID: </Typography>
+          <Typography className="details">
+            <Box>
+              <ArrowRight />
+              {val.transactionID}
+            </Box>
+          </Typography>
+        </Paper>
+        <Paper sx={{ borderLeft: `solid 25px ${colors.secondary[500]}` }}>
+          <Typography className="headers">Transactor ID: </Typography>
+          <Typography className="details">
+            <Box>
+              <ArrowRight />
+              {val.transactor}
+            </Box>
+          </Typography>
+        </Paper>
+        <Paper sx={{ borderLeft: `solid 25px ${colors.primary[500]}` }}>
+          <Typography className="headers">Total Sum</Typography>
+          <Typography className="details">
+            <Box>
+              <ArrowRight />
+              {val.totalSum.toFixed(2)}
+            </Box>
+          </Typography>
+        </Paper>
+        <Paper sx={{ borderLeft: `solid 25px ${colors.secondary[500]}` }}>
+          <Typography className="headers">Discount Amount</Typography>
+          <Typography className="details">
+            <Box>
+              <ArrowRight />
+              {val.discountAmount.toFixed(2)}
+            </Box>
+          </Typography>
+        </Paper>
+        <Paper sx={{ borderLeft: `solid 25px ${colors.primary[500]}` }}>
+          <Typography className="headers">Vat Amount</Typography>
+          <Typography className="details">
+            <Box>
+              <ArrowRight />
+              {val.vatAmount.toFixed(2)}
+            </Box>
+          </Typography>
+        </Paper>
+        <Paper sx={{ borderLeft: `solid 25px ${colors.secondary[500]}` }}>
+          <Typography className="headers">Transaction Date</Typography>
+          <Typography className="details">
+            <Box>
+              <ArrowRight />
+              {format(new Date(val.createdAt), "MMMM dd, yyyy")}
+            </Box>
+          </Typography>
+        </Paper>
+      </Box>
+    );
+  };
   useEffect(() => {
     const getData = async () => {
       try {
         setLoadingDialog({ isOpen: true });
-        const response = await axiosPrivate.get("/api/sales/allSales");
+        const response = await axiosPrivate.get(`/api/sales/${_id}`);
         if (response.status === 200) {
           const json = await response.data;
           console.log("🚀 ~ file: Sales.jsx:144 ~ getData ~ json", json);
-          salesDispatch({ type: "SET_SALES", payload: json });
+          setSalesDetails(json);
+          setItemsDetails([...json[0].items]);
         }
         setLoadingDialog({ isOpen: false });
       } catch (error) {
@@ -207,53 +288,70 @@ const SalesDetails = () => {
             }}
             fontWeight="700"
           >
-            Sales
+            Sales information
           </Typography>
         </Box>
         <Box
           sx={{
+            display: "flex",
+            flexDirection: "row",
             height: "100%",
             width: "100%",
-            "& .super-app-theme--Low": {
-              bgcolor: "#F68181",
-              "&:hover": {
-                bgcolor: (theme) =>
-                  getHoverBackgroundColor(
-                    theme.palette.warning.main,
-                    theme.palette.mode
-                  ),
-              },
-            },
+            gap: 2,
           }}
         >
-          <DataGrid
-            rows={sales ? sales : []}
-            getRowId={(row) => row?._id}
-            columns={columns}
-            pageSize={page}
-            onPageSizeChange={(newPageSize) => setPage(newPageSize)}
-            rowsPerPageOptions={[15, 50]}
-            pagination
+          <Box sx={{ p: "1em 0", height: "100%", width: "100%" }}>
+            {saleDetails &&
+              saleDetails.map((val) => {
+                return SetSalesDetails(val);
+              })}
+          </Box>
+          <Box
             sx={{
-              "& .MuiDataGrid-cell": {
-                textTransform: "capitalize",
-              },
-              "& .MuiDataGrid-columnHeaderTitle": {
-                fontWeight: "bold",
-              },
-            }}
-            initialState={{
-              columns: {
-                columnVisibilityModel: {
-                  vatAmount: false,
-                  discountAmount: false,
+              height: "100%",
+              width: "100%",
+
+              "& .super-app-theme--Low": {
+                bgcolor: "#F68181",
+                "&:hover": {
+                  bgcolor: (theme) =>
+                    getHoverBackgroundColor(
+                      theme.palette.warning.main,
+                      theme.palette.mode
+                    ),
                 },
               },
             }}
-            components={{
-              Toolbar: CustomToolbar,
-            }}
-          />
+          >
+            <DataGrid
+              rows={itemsDetails ? itemsDetails : []}
+              getRowId={(row) => row?.productID}
+              columns={columns}
+              pageSize={page}
+              onPageSizeChange={(newPageSize) => setPage(newPageSize)}
+              rowsPerPageOptions={[15, 50]}
+              pagination
+              sx={{
+                "& .MuiDataGrid-cell": {
+                  textTransform: "capitalize",
+                },
+                "& .MuiDataGrid-columnHeaderTitle": {
+                  fontWeight: "bold",
+                },
+              }}
+              initialState={{
+                columns: {
+                  columnVisibilityModel: {
+                    vatAmount: false,
+                    discountAmount: false,
+                  },
+                },
+              }}
+              components={{
+                Toolbar: CustomToolbar,
+              }}
+            />
+          </Box>
         </Box>
       </Paper>
     </Box>

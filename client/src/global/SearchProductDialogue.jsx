@@ -180,7 +180,7 @@ const SearchProductDialogue = (props) => {
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <Paper
-            elevation={1}
+            elevation={5}
             sx={{
               display: "flex",
               width: "100%",
@@ -191,7 +191,14 @@ const SearchProductDialogue = (props) => {
               gap: 1,
             }}
           >
-            <Typography variant="h3" textAlign="center" sx={{ width: "100%" }}>
+            <Typography
+              variant="h4"
+              textAlign="center"
+              sx={{
+                width: "100%",
+              }}
+              fontWeight={700}
+            >
               {productName || "Select a product"}
             </Typography>
             <Divider orientation="vertical" />

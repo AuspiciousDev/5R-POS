@@ -18,6 +18,7 @@ import {
   InputLabel,
   TextField,
   Checkbox,
+  TablePagination,
 } from "@mui/material";
 import {
   Add,
@@ -291,6 +292,19 @@ const Cashier = () => {
       }
     }
   };
+
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(8);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <Box className="contents">
       <SearchProductDialogue open={open} onClose={handleClose} />
@@ -369,6 +383,7 @@ const Cashier = () => {
                   display: "flex",
                   p: "5px 15px",
                   mt: "0.25em",
+                  height: "4em",
                   backgroundColor: colors.secondary[500],
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -377,7 +392,14 @@ const Cashier = () => {
                 <Typography variant="h4">
                   Product Items ({items.length})
                 </Typography>
-                <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    height: "100%",
+                    alignItems: "center",
+                  }}
+                >
                   <ButtonBase onClick={handleClickOpen}>
                     <Paper
                       elevation={3}
@@ -401,7 +423,11 @@ const Cashier = () => {
                   </ButtonBase>
                   <IconButton
                     type="button"
-                    sx={{ backgroundColor: colors.black[900], height: "100%" }}
+                    sx={{
+                      backgroundColor: colors.black[900],
+                      width: "45px",
+                      height: "100%",
+                    }}
                     onClick={() => {
                       setConfirmDialog({
                         isOpen: true,
@@ -416,82 +442,105 @@ const Cashier = () => {
                   </IconButton>
                 </Box>
               </Paper>
-
-              <TableContainer component={Paper}>
-                <Table aria-label="simple table">
-                  <TableHead>
-                    <TableRow
-                      sx={{
-                        "& > th": {
-                          fontWeight: "bold",
-                        },
-                      }}
-                    >
-                      <TableCell>Product ID</TableCell>
-                      <TableCell>Product Name</TableCell>
-                      <TableCell align="center">Necessity</TableCell>
-                      <TableCell align="center">Quantity</TableCell>
-                      <TableCell align="right">Price</TableCell>
-                      <TableCell align="right">Total</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {items &&
-                      items.map((val, key) => {
-                        return (
-                          <TableRow key={key}>
-                            <TableCell>{val?.productID}</TableCell>
-                            <TableCell>{val?.productName}</TableCell>
-                            <TableCell align="center">
-                              {val?.necessity === true ? (
-                                <Paper
-                                  sx={{
-                                    display: "flex",
-                                    padding: "0.25em 0.5em",
-                                    gap: 1,
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <CheckCircle
-                                    sx={{
-                                      color: "green",
-                                    }}
-                                  />
-                                  <Typography>Discount</Typography>
-                                </Paper>
-                              ) : (
-                                <Paper
-                                  sx={{
-                                    display: "flex",
-                                    padding: "0.25em 0.5em",
-                                    gap: 1,
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <Cancel
-                                    sx={{
-                                      color: "red",
-                                    }}
-                                  />
-                                  <Typography> None</Typography>
-                                </Paper>
-                              )}
-                            </TableCell>
-                            <TableCell align="center">
-                              {val?.quantity}
-                            </TableCell>
-                            <TableCell align="right">
-                              {(val?.price).toFixed(2)}
-                            </TableCell>
-                            <TableCell align="right">
-                              {(val?.productSum).toFixed(2)}
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <Box
+                sx={{
+                  display: "flex",
+                  height: "100%",
+                  flexDirection: "column",
+                }}
+              >
+                <TableContainer component={Paper} sx={{ height: "100%" }}>
+                  <Table aria-label="simple table">
+                    <TableHead>
+                      <TableRow
+                        sx={{
+                          "& > th": {
+                            fontWeight: "bold",
+                          },
+                        }}
+                      >
+                        <TableCell>Product ID</TableCell>
+                        <TableCell>Product Name</TableCell>
+                        <TableCell align="center">Necessity</TableCell>
+                        <TableCell align="center">Quantity</TableCell>
+                        <TableCell align="right">Price</TableCell>
+                        <TableCell align="right">Total</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {items &&
+                        items
+                          .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                          .map((val, key) => {
+                            return (
+                              <TableRow key={key}>
+                                <TableCell>{val?.productID}</TableCell>
+                                <TableCell>{val?.productName}</TableCell>
+                                <TableCell align="center">
+                                  {val?.necessity === true ? (
+                                    <Paper
+                                      sx={{
+                                        display: "flex",
+                                        padding: "0.25em 0.5em",
+                                        gap: 1,
+                                        justifyContent: "center",
+                                      }}
+                                    >
+                                      <CheckCircle
+                                        sx={{
+                                          color: "green",
+                                        }}
+                                      />
+                                      <Typography>Discount</Typography>
+                                    </Paper>
+                                  ) : (
+                                    <Paper
+                                      sx={{
+                                        display: "flex",
+                                        padding: "0.25em 0.5em",
+                                        gap: 1,
+                                        justifyContent: "center",
+                                      }}
+                                    >
+                                      <Cancel
+                                        sx={{
+                                          color: "red",
+                                        }}
+                                      />
+                                      <Typography> None</Typography>
+                                    </Paper>
+                                  )}
+                                </TableCell>
+                                <TableCell align="center">
+                                  {val?.quantity}
+                                </TableCell>
+                                <TableCell align="right">
+                                  {(val?.price).toFixed(2)}
+                                </TableCell>
+                                <TableCell align="right">
+                                  {(val?.productSum).toFixed(2)}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <Divider />
+                <TablePagination
+                  rowsPerPageOptions={[5, 10]}
+                  component="div"
+                  sx={{ overflow: "hidden" }}
+                  count={items && items.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </Box>
             </Box>
             <Paper
               sx={{

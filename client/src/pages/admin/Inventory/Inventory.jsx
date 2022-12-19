@@ -16,6 +16,7 @@ import {
   Delete,
   Fastfood,
   FastfoodOutlined,
+  Edit,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, GridToolbar, GridToolbarContainer } from "@mui/x-data-grid";
@@ -224,19 +225,39 @@ const Inventory = () => {
       sortable: false,
       renderCell: (params) => {
         return (
-          <IconButton
-            onClick={(event) => {
-              handleCellClick(event, params);
-            }}
-          >
-            <Delete sx={{ color: "red" }} />
-          </IconButton>
+          <>
+            <IconButton
+              onClick={(event) => {
+                handleCellEditClick(event, params);
+              }}
+            >
+              <Edit sx={{ color: colors.black[100] }} />
+            </IconButton>
+            <IconButton
+              onClick={(event) => {
+                handleCellDeleteClick(event, params);
+              }}
+            >
+              <Delete sx={{ color: "red" }} />
+            </IconButton>
+          </>
         );
       },
     },
   ];
 
-  const handleCellClick = (event, params) => {
+  const handleCellEditClick = (event, params) => {
+    event.stopPropagation();
+
+    setConfirmDialog({
+      isOpen: true,
+      title: `Are you sure to edit [${params?.row?.productName}]`,
+      onConfirm: () => {
+        navigate(`edit/${params?.row._id}`);
+      },
+    });
+  };
+  const handleCellDeleteClick = (event, params) => {
     event.stopPropagation();
 
     setConfirmDialog({

@@ -26,18 +26,21 @@ import Dashboard from "./pages/admin/Dashboard";
 import Cashier from "./pages/admin/Cashier/Cashier";
 import Inventory from "./pages/admin/Inventory/Inventory";
 import InventoryAdd from "./pages/admin/Inventory/InventoryAdd";
+import InventoryUpdate from "./pages/admin/Inventory/InventoryUpdate";
 
 import Employee from "./pages/admin/Employee/Employee";
 import EmployeeAdd from "./pages/admin/Employee/EmployeeAdd";
 
 import Restock from "./pages/admin/Restock/Restock";
 import Sales from "./pages/admin/Sales/Sales";
+import SalesDetails from "./pages/admin/Sales/SalesDetails";
 import Archived from "./pages/admin/Archived/Archived";
 
 // * EMPLOYEE ROUTES
 import EmployeeLayout from "./pages/employee/EmployeeLayout";
 import EmpDashboard from "./pages/employee/EmpDashboard";
 import RestockAdd from "./pages/admin/Restock/RestockAdd";
+import EmployeeUpdate from "./pages/admin/Employee/EmployeeUpdate";
 EmployeeLayout;
 const USER_TYPE = {
   ADMIN: "admin",
@@ -67,11 +70,20 @@ const App = () => {
                   <Route path="cashier" element={<Cashier />} />
                   <Route path="inventory" element={<Inventory />} />
                   <Route path="inventory/add" element={<InventoryAdd />} />
+                  <Route
+                    path="inventory/edit/:_id"
+                    element={<InventoryUpdate />}
+                  />
                   <Route path="employee" element={<Employee />} />
                   <Route path="employee/add" element={<EmployeeAdd />} />
+                  <Route
+                    path="employee/edit/:username"
+                    element={<EmployeeUpdate />}
+                  />
                   <Route path="restock" element={<Restock />} />
                   <Route path="restock/add" element={<RestockAdd />} />
                   <Route path="sales" element={<Sales />} />
+                  <Route path="sales/:_id" element={<SalesDetails />} />
                   <Route path="archived" element={<Archived />} />
                 </Route>
               </Route>
