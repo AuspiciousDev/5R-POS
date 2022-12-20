@@ -178,7 +178,7 @@ const Sidebar = () => {
 
           <Item
             title="Cashier"
-            to="/admin"
+            to="/employee"
             icon={<PointOfSaleOutlined />}
             selected={selected}
             setSelected={setSelected}
@@ -190,31 +190,11 @@ const Sidebar = () => {
             selected={selected}
             setSelected={setSelected}
           />
-          <Item
-            title="Employee"
-            to="employee"
-            icon={<BadgeOutlined />}
-            selected={selected}
-            setSelected={setSelected}
-          />
+
           <Item
             title="Restock"
             to="restock"
             icon={<InventoryOutlined />}
-            selected={selected}
-            setSelected={setSelected}
-          />
-          <Item
-            title="Sales"
-            to="sales"
-            icon={<MonetizationOnOutlined />}
-            selected={selected}
-            setSelected={setSelected}
-          />
-          <Item
-            title="Archived"
-            to="archived"
-            icon={<Inventory2Outlined />}
             selected={selected}
             setSelected={setSelected}
           />

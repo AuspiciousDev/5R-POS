@@ -39,7 +39,7 @@ const EmployeeAdd = () => {
   const [lastName, setLastName] = useState("");
   const [address, setAddress] = useState("");
   const [mobile, setMobile] = useState("");
-  const [birthday, setBirthday] = useState("");
+  const [birthday, setBirthday] = useState(null);
 
   const [userNameError, setUsernameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -78,7 +78,7 @@ const EmployeeAdd = () => {
         middleName,
         lastName,
         address,
-        mobile: "09" + mobile,
+        mobile,
         birthday,
       };
       console.log(
@@ -145,6 +145,18 @@ const EmployeeAdd = () => {
         });
       }
     }
+  };
+
+  const clearFields = () => {
+    setUsername("");
+    setEmail("");
+    setUserType("");
+    setFirstName("");
+    setMiddleName("");
+    setLastName("");
+    setAddress("");
+    setMobile("");
+    setBirthday(null);
   };
   return (
     <Box className="contents">

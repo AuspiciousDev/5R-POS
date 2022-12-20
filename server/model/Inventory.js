@@ -13,7 +13,7 @@ const schema = new Schema(
     quantity: {
       type: Number,
       required: true,
-    },
+    },      
     brand: {
       type: String,
       required: true,

@@ -16,6 +16,7 @@ const Unauthorized = () => {
       justifyContent="center"
       alignItems="center"
       minHeight="100vh"
+      minWidth="100vw"
       flexDirection="column"
     >
       <Typography variant="h1">Unauthorized</Typography>

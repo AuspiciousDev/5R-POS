@@ -105,7 +105,7 @@ const Login = () => {
           from === "/" && userType === "admin"
             ? navigate("/admin", { replace: true })
             : from === "/" && userType === "employee"
-            ? navigate("/teacher", { replace: true })
+            ? navigate("/employee", { replace: true })
             : navigate(from, { replace: true });
         }
         setLoadingDialog({ isOpen: false });

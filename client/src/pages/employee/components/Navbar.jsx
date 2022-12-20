@@ -136,7 +136,7 @@ const Navbar = () => {
       >
         <MenuItem
           onClick={() => {
-            navigate(`/admin/profile/${auth.username}`);
+            navigate(`/employee/profile/${auth.username}`);
           }}
           disableRipple
         >
@@ -145,7 +145,7 @@ const Navbar = () => {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            navigate(`/admin/changePassword`);
+            navigate(`/employee/changePassword`);
           }}
           disableRipple
         >

@@ -1,6 +1,24 @@
 const Sale = require("../model/Sale");
 const Inventory = require("../model/Inventory");
 
+const setMonday = (dateNow) => {
+  let timeLeftTillMonday, timeNow, monday, deltaTime;
+  const msInSecond = 1000;
+  timeNow = Math.round(dateNow.getTime() / msInSecond);
+  console.log("🚀 ~ file: Employee.jsx:411 ~ setMonday ~ timeNow", timeNow);
+
+  monday =
+    dateNow.setDate(dateNow.getDate() + ((7 - dateNow.getDay()) % 7) + 1) /
+    msInSecond;
+  console.log("🚀 ~ file: Employee.jsx:416 ~ setMonday ~ monday", monday);
+  timeLeftTillMonday = Math.round(Math.abs(monday - timeNow));
+  console.log(
+    "🚀 ~ file: Employee.jsx:418 ~ setMonday ~ timeLeftTillMonday",
+    timeLeftTillMonday
+  );
+
+  return timeLeftTillMonday;
+};
 const saleController = {
   createSale: async (req, res) => {
     let emptyFields = [];

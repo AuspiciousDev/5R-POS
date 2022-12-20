@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
   Navigate,
@@ -23,6 +23,9 @@ import RequireAuth from "./pages/components/RequireAuth";
 // * ADMIN ROUTES
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
+import UserProfile from "./pages/admin/Profile/UserProfile";
+import ChangePassword from "./pages/employee/Profile/ChangePassword";
+
 import Cashier from "./pages/admin/Cashier/Cashier";
 import Inventory from "./pages/admin/Inventory/Inventory";
 import InventoryAdd from "./pages/admin/Inventory/InventoryAdd";
@@ -30,8 +33,11 @@ import InventoryUpdate from "./pages/admin/Inventory/InventoryUpdate";
 
 import Employee from "./pages/admin/Employee/Employee";
 import EmployeeAdd from "./pages/admin/Employee/EmployeeAdd";
+import EmployeeUpdate from "./pages/admin/Employee/EmployeeUpdate";
 
 import Restock from "./pages/admin/Restock/Restock";
+import RestockAdd from "./pages/admin/Restock/RestockAdd";
+
 import Sales from "./pages/admin/Sales/Sales";
 import SalesDetails from "./pages/admin/Sales/SalesDetails";
 import Archived from "./pages/admin/Archived/Archived";
@@ -39,8 +45,13 @@ import Archived from "./pages/admin/Archived/Archived";
 // * EMPLOYEE ROUTES
 import EmployeeLayout from "./pages/employee/EmployeeLayout";
 import EmpDashboard from "./pages/employee/EmpDashboard";
-import RestockAdd from "./pages/admin/Restock/RestockAdd";
-import EmployeeUpdate from "./pages/admin/Employee/EmployeeUpdate";
+
+import EmpCashier from "./pages/employee/Cashier/Cashier";
+import EmpInventory from "./pages/employee/Inventory/Inventory";
+import EmpRestock from "./pages/employee/Restock/Restock";
+import EmpRestockAdd from "./pages/employee/Restock/RestockAdd";
+import EmpUserProfile from "./pages/employee/Profile/UserProfile";
+import EmpChangePassword from "./pages/employee/Profile/ChangePassword";
 EmployeeLayout;
 const USER_TYPE = {
   ADMIN: "admin",
@@ -58,7 +69,7 @@ const App = () => {
             <Route path="/" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route
-              path="/auth/reset-password/:resetToken"
+              path="/auth/forgot-password/:resetToken"
               element={<ResetPassword />}
             />
             <Route path="unauthorized" element={<Unauthorized />} />
@@ -66,8 +77,8 @@ const App = () => {
             <Route element={<PersistLogin />}>
               <Route element={<RequireAuth allowedRoles={[USER_TYPE.ADMIN]} />}>
                 <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<Dashboard />} />
-                  <Route path="cashier" element={<Cashier />} />
+                  {/* <Route index element={<Dashboard />} /> */}
+                  <Route index element={<Cashier />} />
                   <Route path="inventory" element={<Inventory />} />
                   <Route path="inventory/add" element={<InventoryAdd />} />
                   <Route
@@ -85,11 +96,24 @@ const App = () => {
                   <Route path="sales" element={<Sales />} />
                   <Route path="sales/:_id" element={<SalesDetails />} />
                   <Route path="archived" element={<Archived />} />
+                  <Route path="changePassword" element={<ChangePassword />} />
+                  <Route path="profile/:username" element={<UserProfile />} />
                 </Route>
               </Route>
               <Route element={<RequireAuth allowedRoles={[USER_TYPE.EMP]} />}>
                 <Route path="/employee" element={<EmployeeLayout />}>
-                  <Route index element={<EmpDashboard />} />
+                  <Route index element={<EmpCashier />} />
+                  <Route path="restock" element={<EmpRestock />} />
+                  <Route path="inventory" element={<EmpInventory />} />
+                  <Route path="restock/add" element={<EmpRestockAdd />} />
+                  <Route
+                    path="changePassword"
+                    element={<EmpChangePassword />}
+                  />
+                  <Route
+                    path="profile/:username"
+                    element={<EmpUserProfile />}
+                  />
                 </Route>
               </Route>
             </Route>

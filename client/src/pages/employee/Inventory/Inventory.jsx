@@ -6,6 +6,7 @@ import {
   Typography,
   useTheme,
   IconButton,
+  ButtonBase,
 } from "@mui/material";
 import { tokens } from "../../../themes";
 import {
@@ -13,9 +14,9 @@ import {
   CheckCircle,
   Cancel,
   Delete,
+  Fastfood,
+  FastfoodOutlined,
   Edit,
-  AdminPanelSettings,
-  BadgeOutlined,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, GridToolbar, GridToolbarContainer } from "@mui/x-data-grid";
@@ -28,7 +29,13 @@ import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { useEffect, useState } from "react";
 import { format } from "date-fns-tz";
 
-import { useUsersContext } from "../../../hooks/useUsersContext";
+import { useInventoriesContext } from "../../../hooks/useInventoriesContext";
+
+import { darken, lighten } from "@mui/material/styles";
+
+const getHoverBackgroundColor = (color, mode) =>
+  mode === "dark" ? darken(color, 0.5) : lighten(color, 0.5);
+
 function CustomToolbar() {
   return (
     <GridToolbarContainer>
@@ -44,14 +51,13 @@ function CustomToolbar() {
     </GridToolbarContainer>
   );
 }
-
-const Employee = () => {
+const Inventory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
   const axiosPrivate = useAxiosPrivate();
-  const { users, usersDispatch } = useUsersContext();
+  const { inventory, inventoryDispatch } = useInventoriesContext();
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -76,152 +82,50 @@ const Employee = () => {
   const [page, setPage] = React.useState(15);
   const columns = [
     {
-      field: "username",
-      headerName: "Username",
-      width: 150,
+      field: "_id",
+      headerName: "Product ID",
+      width: 180,
     },
     {
-      field: "userType",
-      headerName: "User Type",
+      field: "productName",
+      headerName: "Product Name",
       width: 150,
-      renderCell: (params) => {
-        return params?.value === "admin" ? (
-          <Paper sx={{ display: "flex", padding: "0.25em 0.5em", gap: 1 }}>
-            <AdminPanelSettings />
-            <Typography sx={{ ml: "10px" }} fontWeight={600}>
-              Admin
-            </Typography>
-          </Paper>
-        ) : (
-          <Paper sx={{ display: "flex", padding: "0.25em 0.5em", gap: 1 }}>
-            <BadgeOutlined />
-            <Typography sx={{ ml: "10px" }}>Employee</Typography>
-          </Paper>
-        );
-      },
-    },
-    {
-      field: "name",
-      headerName: "Name",
-      width: 150,
-      valueGetter: (params) =>
-        `${params.row.firstName || ""} ${params.row.middleName || ""} ${
-          params.row.lastName || ""
-        }`,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      width: 220,
-      renderCell: (params) => {
-        return (
-          <Typography
-            sx={{ textTransform: "lowercase", fontSize: "0.8125rem" }}
-          >
-            {params?.value}
-          </Typography>
-        );
-      },
-    },
-    {
-      field: "address",
-      headerName: "Address",
-      width: 150,
-    },
-    {
-      field: "mobile",
-      headerName: "Mobile #",
-      width: 150,
-      valueFormatter: (params) => "09" + params.value,
-    },
-    {
-      field: "birthday",
-      headerName: "Birthday",
-      width: 150,
-      valueFormatter: (params) =>
-        format(new Date(params?.value), "MMMM dd, yyyy"),
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      width: 150,
-      headerAlign: "center",
-      align: "center",
-      renderCell: (params) => {
-        return (
-          <>
-            <IconButton
-              onClick={() => {
-                setConfirmDialog({
-                  isOpen: true,
-                  title: `Are you sure to change status of  ${params?.row?.firstName}  ${params?.row?.lastName}`,
-                  message: `${
-                    params?.value === true
-                      ? " ACTIVE to INACTIVE"
-                      : " INACTIVE to ACTIVE"
-                  }`,
-                  onConfirm: () => {
-                    toggleStatus({ val: params?.row });
-                  },
-                });
-              }}
-            >
-              {params?.value === true ? (
-                <Paper
-                  sx={{ display: "flex", padding: "0.25em 0.5em", gap: 1 }}
-                >
-                  <CheckCircle
-                    sx={{
-                      color: "green",
-                    }}
-                  />
-                  <Typography>Active</Typography>
-                </Paper>
-              ) : (
-                <Paper
-                  sx={{ display: "flex", padding: "0.25em 0.5em", gap: 1 }}
-                >
-                  <Cancel
-                    sx={{
-                      color: "red",
-                    }}
-                  />
-                  <Typography>Inactive</Typography>
-                </Paper>
-              )}
-            </IconButton>
-          </>
-        );
-      },
     },
 
     {
-      field: "_id",
-      headerName: "Action",
-      width: 175,
-      sortable: false,
-      headerAlign: "center",
-      align: "center",
-      renderCell: (params) => {
-        return (
-          <>
-            <IconButton
-              onClick={(event) => {
-                handleCellEditClick(event, params);
-              }}
-            >
-              <Edit sx={{ color: colors.black[100] }} />
-            </IconButton>
-            <IconButton
-              onClick={(event) => {
-                handleCellClick(event, params);
-              }}
-            >
-              <Delete sx={{ color: "red" }} />
-            </IconButton>
-          </>
-        );
-      },
+      field: "price",
+      headerName: "Price",
+      width: 150,
+    },
+    {
+      field: "quantity",
+      headerName: "Quantity",
+      width: 150,
+    },
+    {
+      field: "brand",
+      headerName: "Brand",
+      width: 150,
+    },
+    {
+      field: "category",
+      headerName: "Category",
+      width: 150,
+    },
+    {
+      field: "supplier",
+      headerName: "Supplier",
+      width: 150,
+    },
+
+    {
+      field: "expiredOn",
+      headerName: "Expiry Date",
+      width: 150,
+      valueFormatter: (params) =>
+        params?.value === "n/a"
+          ? "N/A"
+          : format(new Date(params?.value), "MMMM dd, yyyy"),
     },
     {
       field: "createdAt",
@@ -230,25 +134,57 @@ const Employee = () => {
       valueFormatter: (params) =>
         format(new Date(params?.value), "MMMM dd, yyyy"),
     },
+    {
+      field: "necessity",
+      headerName: "Necessity",
+      width: 150,
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => {
+        return (
+          <>
+            {params?.value === true ? (
+              <Paper sx={{ display: "flex", padding: "0.25em 0.5em", gap: 1 }}>
+                <CheckCircle
+                  sx={{
+                    color: "green",
+                  }}
+                />
+                <Typography>Discount</Typography>
+              </Paper>
+            ) : (
+              <Paper sx={{ display: "flex", padding: "0.25em 0.5em", gap: 1 }}>
+                <Cancel
+                  sx={{
+                    color: "red",
+                  }}
+                />
+                <Typography> None</Typography>
+              </Paper>
+            )}
+          </>
+        );
+      },
+    },
   ];
+
   const handleCellEditClick = (event, params) => {
     event.stopPropagation();
 
     setConfirmDialog({
       isOpen: true,
-      title: `Are you sure to edit employee `,
-      message: `[${params?.row?.username}]`,
+      title: `Are you sure to edit [${params?.row?.productName}]`,
       onConfirm: () => {
-        navigate(`edit/${params?.row.username}`);
+        navigate(`edit/${params?.row._id}`);
       },
     });
   };
-  const handleCellClick = (event, params) => {
+  const handleCellDeleteClick = (event, params) => {
     event.stopPropagation();
 
     setConfirmDialog({
       isOpen: true,
-      title: `Are you sure to delete ${params?.row?.firstName} ${params?.row?.lastName}`,
+      title: `Are you sure to delete [${params?.row?.productName}]`,
       message: `This action is irreversible!`,
       onConfirm: () => {
         handleDelete({ val: params.row });
@@ -259,11 +195,10 @@ const Employee = () => {
     const getData = async () => {
       try {
         setLoadingDialog({ isOpen: true });
-        const response = await axiosPrivate.get("/api/users/allUsers");
+        const response = await axiosPrivate.get("/api/inventory/allProducts");
         if (response.status === 200) {
           const json = await response.data;
-          console.log("🚀 ~ file: Employee.jsx:65 ~ getData ~ json", json);
-          usersDispatch({ type: "SET_USERS", payload: json });
+          inventoryDispatch({ type: "SET_INVENTORIES", payload: json });
         }
         setLoadingDialog({ isOpen: false });
       } catch (error) {
@@ -317,14 +252,17 @@ const Employee = () => {
     try {
       setLoadingDialog({ isOpen: true });
       const apiStatus = await axiosPrivate.patch(
-        `/api/users/status/${val.username}`,
+        `/api/inventory/status/${val._id}`,
         JSON.stringify({ status: newStatus })
       );
       if (apiStatus.status === 200) {
-        const apiEmployee = await axiosPrivate.get("/api/users/allUsers");
+        const apiEmployee = await axiosPrivate.get(
+          "/api/inventory/allProducts"
+        );
         if (apiEmployee?.status === 200) {
           const json = await apiEmployee.data;
-          usersDispatch({ type: "SET_USERS", payload: json });
+          inventoryDispatch({ type: "SET_INVENTORIES", payload: json });
+
           setSuccessDialog({ isOpen: true });
         }
       }
@@ -371,14 +309,15 @@ const Employee = () => {
     try {
       setLoadingDialog({ isOpen: true });
       const response = await axiosPrivate.delete(
-        `/api/users/delete/${val.username}`
+        `/api/inventory/delete/${val._id}`
       );
       const json = await response.data;
       if (response.status === 200) {
+        inventoryDispatch({ type: "DELETE_INVENTORY", payload: json });
         console.log(json);
         setSuccessDialog({
           isOpen: true,
-          message: `User ${val.username} has been Deleted!`,
+          message: `${val.productName} has been Deleted!`,
         });
       }
       setLoadingDialog({ isOpen: false });
@@ -422,7 +361,6 @@ const Employee = () => {
       }
     }
   };
-
   return (
     <Box className="contents">
       <ConfirmDialogue
@@ -460,31 +398,34 @@ const Employee = () => {
             }}
             fontWeight="700"
           >
-            Employee
+            Inventory
           </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "end",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              sx={{ height: "100%", color: "white" }}
-              variant="contained"
-              startIcon={<PersonAddAlt1 />}
-              onClick={() => {
-                navigate("add");
-              }}
-            >
-              <Typography> Add Employee</Typography>
-            </Button>
-          </Box>
         </Box>
-        <Box sx={{ height: "100%" }}>
+        <Box
+          sx={{
+            height: "100%",
+            width: "100%",
+            "& .super-app-theme--Low": {
+              bgcolor: "#F68181",
+              "&:hover": {
+                bgcolor: (theme) =>
+                  getHoverBackgroundColor(
+                    theme.palette.warning.main,
+                    theme.palette.mode
+                  ),
+              },
+            },
+          }}
+        >
           <DataGrid
-            rows={users ? users : []}
-            getRowId={(row) => row._id}
+            rows={
+              inventory
+                ? inventory.filter((filter) => {
+                    return filter.status === true;
+                  })
+                : []
+            }
+            getRowId={(row) => row?._id}
             columns={columns}
             pageSize={page}
             onPageSizeChange={(newPageSize) => setPage(newPageSize)}
@@ -501,15 +442,20 @@ const Employee = () => {
             initialState={{
               columns: {
                 columnVisibilityModel: {
-                  createdAt: false,
                   _id: false,
+                  createdAt: false,
                   address: false,
+                  action: false,
+                  necessity: false,
                 },
               },
             }}
             components={{
               Toolbar: CustomToolbar,
             }}
+            getRowClassName={(params) =>
+              `super-app-theme--${params.row.quantity > 20 ? "High" : "Low"}`
+            }
           />
         </Box>
       </Paper>
@@ -517,4 +463,4 @@ const Employee = () => {
   );
 };
 
-export default Employee;
+export default Inventory;
