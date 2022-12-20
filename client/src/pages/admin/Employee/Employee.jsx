@@ -79,6 +79,15 @@ const Employee = () => {
       field: "username",
       headerName: "Username",
       width: 150,
+      renderCell: (params) => {
+        return (
+          <Typography
+            sx={{ textTransform: "lowercase", fontSize: "0.8125rem" }}
+          >
+            {params?.value}
+          </Typography>
+        );
+      },
     },
     {
       field: "userType",
@@ -376,6 +385,7 @@ const Employee = () => {
       const json = await response.data;
       if (response.status === 200) {
         console.log(json);
+        usersDispatch({ type: "DELETE_USER", payload: json });
         setSuccessDialog({
           isOpen: true,
           message: `User ${val.username} has been Deleted!`,

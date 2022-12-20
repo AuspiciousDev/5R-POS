@@ -250,7 +250,7 @@ const ForgotPassword = () => {
                   },
                 }}
               >
-                <Link to="/login">
+                <Link to="/">
                   <span>Login account</span>
                 </Link>
               </Box>

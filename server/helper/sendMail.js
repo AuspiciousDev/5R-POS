@@ -258,13 +258,13 @@ const sendNewUser = (to, url, text, name, username, password, role) => {
                 </p>
                 <p style="margin: 0">
                   Username:
-                  <span style="text-transform: capitalize; font-weight: 600"
+                  <span font-weight: 600"
                     >${username}</span
                   >
                 </p>
                 <p style="margin: 0">
                   Password:
-                  <span style="text-transform: capitalize; font-weight: 600"
+                  <span font-weight: 600"
                     >${password}</span
                   >
                 </p>
