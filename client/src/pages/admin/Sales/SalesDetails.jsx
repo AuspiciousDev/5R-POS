@@ -113,92 +113,106 @@ const SalesDetails = () => {
   ];
   const SetSalesDetails = (val) => {
     return (
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 2,
-          "& > .MuiPaper-root": {
-            p: 1,
-            boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
-          },
-          "> .MuiPaper-root:hover": {
-            transition: "0.3s",
-            transform: "scale(1.01)",
-            filter: `drop-shadow(0 0.5em 1em ${colors.secondary[500]})`,
-          },
-          "& .headers": {
+      <>
+        <Typography
+          variant="h4"
+          textTransform="uppercase"
+          sx={{
             paddingLeft: "0.3em",
-            m: "10px 0 25px 0",
-            fontSize: "18pt",
-            fontWeight: 600,
-          },
-          "& .details": {
-            m: "10px 0 10px 0",
-            fontSize: "14pt",
-          },
-          "& .details .MuiBox-root": {
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          },
-        }}
-      >
-        <Paper sx={{ borderLeft: `solid 25px ${colors.primary[500]}` }}>
-          <Typography className="headers">Transaction ID: </Typography>
-          <Typography className="details">
-            <Box>
-              <ArrowRight />
-              {val.transactionID}
-            </Box>
-          </Typography>
-        </Paper>
-        <Paper sx={{ borderLeft: `solid 25px ${colors.secondary[500]}` }}>
-          <Typography className="headers">Transactor ID: </Typography>
-          <Typography className="details">
-            <Box>
-              <ArrowRight />
-              {val.transactor}
-            </Box>
-          </Typography>
-        </Paper>
-        <Paper sx={{ borderLeft: `solid 25px ${colors.primary[500]}` }}>
-          <Typography className="headers">Total Sum</Typography>
-          <Typography className="details">
-            <Box>
-              <ArrowRight />
-              {val.totalSum.toFixed(2)}
-            </Box>
-          </Typography>
-        </Paper>
-        <Paper sx={{ borderLeft: `solid 25px ${colors.secondary[500]}` }}>
-          <Typography className="headers">Discount Amount</Typography>
-          <Typography className="details">
-            <Box>
-              <ArrowRight />
-              {val.discountAmount.toFixed(2)}
-            </Box>
-          </Typography>
-        </Paper>
-        <Paper sx={{ borderLeft: `solid 25px ${colors.primary[500]}` }}>
-          <Typography className="headers">Vat Amount</Typography>
-          <Typography className="details">
-            <Box>
-              <ArrowRight />
-              {val.vatAmount.toFixed(2)}
-            </Box>
-          </Typography>
-        </Paper>
-        <Paper sx={{ borderLeft: `solid 25px ${colors.secondary[500]}` }}>
-          <Typography className="headers">Transaction Date</Typography>
-          <Typography className="details">
-            <Box>
-              <ArrowRight />
-              {format(new Date(val.createdAt), "MMMM dd, yyyy")}
-            </Box>
-          </Typography>
-        </Paper>
-      </Box>
+            borderLeft: `solid 5px ${colors.secondary[500]}`,
+            m: "1em 0",
+          }}
+          fontWeight="700"
+        >
+          Transaction Information
+        </Typography>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 2,
+            "& > .MuiPaper-root": {
+              p: 1,
+              boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
+            },
+            "> .MuiPaper-root:hover": {
+              transition: "0.3s",
+              transform: "scale(1.01)",
+              filter: `drop-shadow(0 0.5em 1em ${colors.secondary[500]})`,
+            },
+            "& .headers": {
+              paddingLeft: "0.3em",
+              m: "10px 0 25px 0",
+              fontSize: "18pt",
+              fontWeight: 600,
+            },
+            "& .details": {
+              m: "10px 0 10px 0",
+              fontSize: "14pt",
+            },
+            "& .details .MuiBox-root": {
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            },
+          }}
+        >
+          <Paper sx={{ borderLeft: `solid 25px ${colors.primary[500]}` }}>
+            <Typography className="headers">Transaction ID: </Typography>
+            <Typography className="details">
+              <Box>
+                <ArrowRight />
+                {val.transactionID}
+              </Box>
+            </Typography>
+          </Paper>
+          <Paper sx={{ borderLeft: `solid 25px ${colors.secondary[500]}` }}>
+            <Typography className="headers">Transactor ID: </Typography>
+            <Typography className="details">
+              <Box>
+                <ArrowRight />
+                {val.transactor}
+              </Box>
+            </Typography>
+          </Paper>
+          <Paper sx={{ borderLeft: `solid 25px ${colors.primary[500]}` }}>
+            <Typography className="headers">Total Sum</Typography>
+            <Typography className="details">
+              <Box>
+                <ArrowRight />
+                {val.totalSum.toFixed(2)}
+              </Box>
+            </Typography>
+          </Paper>
+          <Paper sx={{ borderLeft: `solid 25px ${colors.secondary[500]}` }}>
+            <Typography className="headers">Discount Amount</Typography>
+            <Typography className="details">
+              <Box>
+                <ArrowRight />
+                {val.discountAmount.toFixed(2)}
+              </Box>
+            </Typography>
+          </Paper>
+          <Paper sx={{ borderLeft: `solid 25px ${colors.primary[500]}` }}>
+            <Typography className="headers">Vat Amount</Typography>
+            <Typography className="details">
+              <Box>
+                <ArrowRight />
+                {val.vatAmount.toFixed(2)}
+              </Box>
+            </Typography>
+          </Paper>
+          <Paper sx={{ borderLeft: `solid 25px ${colors.secondary[500]}` }}>
+            <Typography className="headers">Transaction Date</Typography>
+            <Typography className="details">
+              <Box>
+                <ArrowRight />
+                {format(new Date(val.createdAt), "MMMM dd, yyyy")}
+              </Box>
+            </Typography>
+          </Paper>
+        </Box>
+      </>
     );
   };
   useEffect(() => {
@@ -208,13 +222,11 @@ const SalesDetails = () => {
         const response = await axiosPrivate.get(`/api/sales/${_id}`);
         if (response.status === 200) {
           const json = await response.data;
-          console.log("🚀 ~ file: Sales.jsx:144 ~ getData ~ json", json);
           setSalesDetails(json);
           setItemsDetails([...json[0].items]);
         }
         setLoadingDialog({ isOpen: false });
       } catch (error) {
-        console.log("🚀 ~ file: Restock.jsx:225 ~ getData ~ error", error);
         setLoadingDialog({ isOpen: false });
         if (!error?.response) {
           setErrorDialog({
@@ -288,7 +300,7 @@ const SalesDetails = () => {
             }}
             fontWeight="700"
           >
-            Sales information
+            Sales
           </Typography>
         </Box>
         <Box
@@ -300,7 +312,7 @@ const SalesDetails = () => {
             gap: 2,
           }}
         >
-          <Box sx={{ p: "1em 0", height: "100%", width: "100%" }}>
+          <Box sx={{ height: "100%", width: "100%" }}>
             {saleDetails &&
               saleDetails.map((val) => {
                 return SetSalesDetails(val);
@@ -323,6 +335,18 @@ const SalesDetails = () => {
               },
             }}
           >
+            <Typography
+              variant="h4"
+              textTransform="uppercase"
+              sx={{
+                paddingLeft: "0.3em",
+                borderLeft: `solid 5px ${colors.secondary[500]}`,
+                m: "1em 0",
+              }}
+              fontWeight="700"
+            >
+              Products sold
+            </Typography>
             <DataGrid
               rows={itemsDetails ? itemsDetails : []}
               getRowId={(row) => row?.productID}
@@ -344,6 +368,7 @@ const SalesDetails = () => {
                   columnVisibilityModel: {
                     vatAmount: false,
                     discountAmount: false,
+                    _id: false,
                   },
                 },
               }}

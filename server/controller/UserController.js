@@ -75,15 +75,15 @@ const UserController = {
       const createUser = await User.create(userObject);
 
       const url = `${process.env.BASE_URL}`;
-      sendMail.sendNewUser(
-        email,
-        url,
-        `Login`,
-        lastName,
-        username,
-        password,
-        userType
-      );
+      // sendMail.sendNewUser(
+      //   email,
+      //   url,
+      //   `Login`,
+      //   lastName,
+      //   username,
+      //   password,
+      //   userType
+      // );
       res.status(201).json(createUser);
     } catch (error) {
       console.log(

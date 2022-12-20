@@ -1,6 +1,7 @@
 const Restock = require("../model/Restock");
 const Inventory = require("../model/Inventory");
-
+const { format } = require("date-fns");
+const currDate = new Date();
 const restockController = {
   createRestock: async (req, res) => {
     let emptyFields = [];
@@ -31,22 +32,40 @@ const restockController = {
         expiredOn,
         supplier,
       };
+      console.log("Current Date: ", currDate);
+      console.log("Delivery Date: ", deliveryDate);
       const createRestock = await Restock.create(restockObj);
-      const updateInventory = await Inventory.findOneAndUpdate(
-        { _id: productID },
-        {
-          $inc: {
-            quantity: quantity,
+      if (
+        format(new Date(currDate), "MMMM dd yyyy") ===
+        format(new Date(deliveryDate), "MMMM dd yyyy")
+      ) {
+        const updateInventory = await Inventory.findOneAndUpdate(
+          { _id: productID },
+          {
+            $inc: {
+              quantity: quantity,
+            },
+            expiredOn,
+            supplier,
           },
-          expiredOn,
-          supplier,
-        },
-        { new: true }
-      );
-      console.log(
-        "🚀 ~ file: RestockController.js:43 ~ createRestock: ~ updateInventory",
-        updateInventory
-      );
+          { new: true }
+        );
+        console.log(
+          "🚀 ~ file: RestockController.js:43 ~ createRestock: ~ updateInventory",
+          updateInventory
+        );
+
+        const updateStatus = await Restock.findOneAndUpdate(
+          { _id: createRestock._id },
+          {
+            status: true,
+          }
+        );
+        console.log(
+          "🚀 ~ file: RestockController.js:66 ~ createRestock: ~ updateStatus",
+          updateStatus
+        );
+      }
       res.status(201).json(createRestock);
     } catch (error) {
       console.log(
@@ -59,14 +78,85 @@ const restockController = {
   getAllRestock: async (req, res) => {
     try {
       const restock = await Restock.find().sort({ createdAt: -1 }).lean();
+
       if (!restock)
         return res.status(204).json({ message: "No Restocks Found!" });
+      const restockUpdate = await Restock.find({ deliveryDate: currDate })
+        .sort({ createdAt: -1 })
+        .lean();
+      console.log(
+        "🚀 ~ file: RestockController.js:70 ~ getAllRestock: ~ restockUpdate",
+        restockUpdate
+      );
+      let bulkTags = [];
+      let bulkStatus = [];
+
+      restock
+        .filter((tag) => {
+          return (
+            tag.deliveryDate !== "n/a" &&
+            tag.status === false &&
+            format(new Date(currDate), "MMMM dd yyyy") ===
+              format(new Date(tag.deliveryDate), "MMMM dd yyyy")
+          );
+        })
+        .map((tag) => {
+          return (
+            bulkTags.push({
+              updateOne: {
+                filter: {
+                  _id: tag?.productID,
+                },
+                update: {
+                  $inc: {
+                    quantity: +tag?.quantity,
+                  },
+                },
+                upsert: true,
+              },
+            }),
+            bulkStatus.push({
+              updateOne: {
+                filter: {
+                  _id: tag?._id,
+                },
+                update: {
+                  $set: {
+                    status: true,
+                  },
+                },
+                upsert: true,
+              },
+            })
+          );
+        });
+
+      Inventory.bulkWrite(bulkTags, (error, result) => {
+        if (error) {
+          res.status(400).json({ message: error.message });
+        } else {
+          // console.log(
+          //   "🚀 ~ file: RestockController.js:132 ~ Inventory.bulkWrite ~ result",
+          //   result
+          // );
+        }
+      });
+      Restock.bulkWrite(bulkStatus, (error, result) => {
+        if (error) {
+          res.status(400).json({ message: error.message });
+        } else {
+          // console.log(
+          //   "🚀 ~ file: RestockController.js:139 ~ Restock.bulkWrite ~ error",
+          //   error
+          // );
+        }
+      });
       res.status(200).json(restock);
     } catch (error) {
-      console.log(
-        "🚀 ~ file: RestockController.js:50 ~ getAllRestock: ~ error",
-        error
-      );
+      // console.log(
+      //   "🚀 ~ file: RestockController.js:50 ~ getAllRestock: ~ error",
+      //   error
+      // );
       res.status(500).json({ message: error.message });
     }
   },

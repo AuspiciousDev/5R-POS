@@ -122,7 +122,7 @@ const Restock = () => {
     },
     {
       field: "deliveryDate",
-      headerName: "Expiry Date",
+      headerName: "Delivery Date",
       width: 150,
       valueFormatter: (params) =>
         format(new Date(params?.value), "MMMM dd, yyyy"),

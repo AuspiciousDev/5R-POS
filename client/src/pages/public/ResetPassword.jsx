@@ -287,7 +287,7 @@ const ResetPassword = () => {
                 <br />
                 <Divider />
                 <Box className="container-footer" sx={{ mt: 1 }}>
-                  <Link to="/login">
+                  <Link to="/">
                     <span>Sign in </span>
                   </Link>
                 </Box>

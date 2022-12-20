@@ -18,6 +18,7 @@ import {
   InventoryOutlined,
   MonetizationOnOutlined,
   MenuOutlined,
+  EventOutlined,
 } from "@mui/icons-material";
 import "react-pro-sidebar/dist/css/styles.css";
 import logo from "../../../assets/5r-logo2.png";
@@ -215,6 +216,13 @@ const Sidebar = () => {
             title="Archived"
             to="archived"
             icon={<Inventory2Outlined />}
+            selected={selected}
+            setSelected={setSelected}
+          />
+          <Item
+            title="Expiry"
+            to="expiry"
+            icon={<EventOutlined />}
             selected={selected}
             setSelected={setSelected}
           />

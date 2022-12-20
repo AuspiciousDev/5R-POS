@@ -9,14 +9,14 @@ import "./App.css";
 import { ColorModeContext, useMode } from "./themes";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
-// * PUBLIC ROUTES
+// ! PUBLIC ROUTES
 import Login from "./pages/public/Login";
 import ForgotPassword from "./pages/public/ForgotPassword";
 import ResetPassword from "./pages/public/ResetPassword";
 import Unauthorized from "./pages/public/Unauthorized";
 import NotFound404 from "./pages/public/NotFound404";
 
-// * PRIVATE ROUTES
+// ! PRIVATE ROUTES
 import PersistLogin from "./pages/components/PersistLogin";
 import RequireAuth from "./pages/components/RequireAuth";
 
@@ -41,6 +41,7 @@ import RestockAdd from "./pages/admin/Restock/RestockAdd";
 import Sales from "./pages/admin/Sales/Sales";
 import SalesDetails from "./pages/admin/Sales/SalesDetails";
 import Archived from "./pages/admin/Archived/Archived";
+import Expiration from "./pages/admin/Expired/Expiration";
 
 // * EMPLOYEE ROUTES
 import EmployeeLayout from "./pages/employee/EmployeeLayout";
@@ -96,6 +97,7 @@ const App = () => {
                   <Route path="sales" element={<Sales />} />
                   <Route path="sales/:_id" element={<SalesDetails />} />
                   <Route path="archived" element={<Archived />} />
+                  <Route path="expiry" element={<Expiration />} />
                   <Route path="changePassword" element={<ChangePassword />} />
                   <Route path="profile/:username" element={<UserProfile />} />
                 </Route>

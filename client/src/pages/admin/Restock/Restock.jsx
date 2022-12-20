@@ -61,6 +61,7 @@ const Restock = () => {
   const { inventory, inventoryDispatch } = useInventoriesContext();
   const { restocks, restockDispatch } = useRestocksContext();
 
+  const getCurrentDate = new Date();
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     title: "",
@@ -122,7 +123,7 @@ const Restock = () => {
     },
     {
       field: "deliveryDate",
-      headerName: "Expiry Date",
+      headerName: "Delivery Date",
       width: 150,
       valueFormatter: (params) =>
         format(new Date(params?.value), "MMMM dd, yyyy"),
@@ -133,6 +134,32 @@ const Restock = () => {
       width: 150,
       valueFormatter: (params) =>
         format(new Date(params?.value), "MMMM dd, yyyy"),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 150,
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => {
+        return (
+          <>
+            {params?.value === true ? (
+              <CheckCircle
+                sx={{
+                  color: "green",
+                }}
+              />
+            ) : (
+              <Cancel
+                sx={{
+                  color: "red",
+                }}
+              />
+            )}
+          </>
+        );
+      },
     },
   ];
 
@@ -260,7 +287,16 @@ const Restock = () => {
           }}
         >
           <DataGrid
-            rows={restocks ? restocks : []}
+            rows={
+              restocks
+                ? restocks.filter((filter) => {
+                    return (
+                      format(new Date(filter.deliveryDate), "MM dd yyyy") >=
+                      format(new Date(), "MM dd yyyy")
+                    );
+                  })
+                : []
+            }
             getRowId={(row) => row?._id}
             columns={columns}
             pageSize={page}

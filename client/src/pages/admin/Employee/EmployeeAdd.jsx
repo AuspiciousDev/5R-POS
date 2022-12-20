@@ -67,7 +67,14 @@ const EmployeeAdd = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (username.length < 6)
+      return (
+        setErrorDialog({
+          isOpen: true,
+          message: "Username must be 6 characters or more!",
+        }),
+        setUsernameError(true)
+      );
     try {
       setLoadingDialog({ isOpen: true });
       const employee = {

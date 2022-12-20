@@ -122,12 +122,6 @@ const ChangePassword = () => {
           message: `${error.response.data.message}`,
         });
         console.log(error.response.data.message);
-      } else if (error.response.status === 403) {
-        setErrorDialog({
-          isOpen: true,
-          message: `${error.response.data.message}`,
-        });
-        navigate("/login", { state: { from: location }, replace: true });
       } else if (error.response.status === 409) {
         setErrorDialog({
           isOpen: true,

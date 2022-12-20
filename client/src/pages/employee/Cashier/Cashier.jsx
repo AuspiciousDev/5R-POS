@@ -45,6 +45,7 @@ import { format } from "date-fns-tz";
 import { useInventoriesContext } from "../../../hooks/useInventoriesContext";
 import { tokens } from "../../../themes";
 import useAuth from "../../../hooks/useAuth";
+import VoidProduct from "../../../global/VoidProduct";
 
 const Cashier = () => {
   const theme = useTheme();
@@ -54,7 +55,7 @@ const Cashier = () => {
   const { inventory, inventoryDispatch } = useInventoriesContext();
   const [clock, setClock] = useState(new Date());
   const { auth } = useAuth();
-  const [items, setItems] = useState([]);
+  let [items, setItems] = useState([]);
   const [discount, setDiscount] = useState(0.2);
   const [vat, setVat] = useState(1.12);
 
@@ -99,6 +100,7 @@ const Cashier = () => {
         if (response.status === 200) {
           const json = await response.data;
           inventoryDispatch({ type: "SET_INVENTORIES", payload: json });
+          const response2 = await axiosPrivate.get("/api/restock/allRestocks");
         }
         setLoadingDialog({ isOpen: false });
       } catch (error) {
@@ -181,6 +183,7 @@ const Cashier = () => {
 
   const [open, setOpen] = React.useState(false);
   const [openCheckout, setOpenCheckOut] = React.useState(false);
+  const [voidOpen, setVoidOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -188,9 +191,13 @@ const Cashier = () => {
   const handleClickOpenCheckOut = () => {
     setOpenCheckOut(true);
   };
+  const handleClickOpenVoid = () => {
+    setOpenCheckOut(true);
+  };
 
   const handleClose = (value) => {
     setOpen(false);
+    setItems;
     let existingItem = items?.find((item) => {
       return item?.productID === value?.productID;
     });
@@ -220,6 +227,9 @@ const Cashier = () => {
     value && handleSaveTransaction(value);
   };
 
+  const handleCloseVoid = (value) => {
+    setVoidOpen(false);
+  };
   const clearFields = () => {
     setConfirmDialog({
       ...confirmDialog,
@@ -237,6 +247,23 @@ const Cashier = () => {
 
   const toggleIsDiscounted = () => {
     setIsDiscounted((prev) => !prev);
+  };
+  const handleRowClick = async (value) => {
+    setConfirmDialog({
+      isOpen: true,
+      message: `Are you sure to remove ${value.productName}?`,
+      onConfirm: () => {
+        handleRemoveRow(value.productID);
+      },
+    });
+  };
+  const handleRemoveRow = async (value) => {
+    setConfirmDialog({
+      ...confirmDialog,
+      isOpen: false,
+    });
+    let newItems = items.filter((val) => val.productID != value);
+    setItems(newItems);
   };
   const handleSaveTransaction = async (value) => {
     try {
@@ -308,6 +335,7 @@ const Cashier = () => {
   return (
     <Box className="contents">
       <SearchProductDialogue open={open} onClose={handleClose} />
+      <VoidProduct open={voidOpen} onClose={handleCloseVoid} />
       <CheckOutDialogue
         open={openCheckout}
         onClose={handleCloseCheckOut}
@@ -476,7 +504,10 @@ const Cashier = () => {
                           )
                           .map((val, key) => {
                             return (
-                              <TableRow key={key}>
+                              <TableRow
+                                key={key}
+                                onClick={() => handleRowClick(val)}
+                              >
                                 <TableCell>{val?.productID}</TableCell>
                                 <TableCell>{val?.productName}</TableCell>
                                 <TableCell align="center">
