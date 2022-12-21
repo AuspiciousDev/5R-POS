@@ -61,6 +61,7 @@ const Cashier = () => {
 
   const [subTotal, setSubTotal] = useState(0);
   const [discountableAmount, setDiscountableAmount] = useState(0);
+  const [nonDiscountableAmount, setNonDiscountableAmount] = useState(0);
   const [discountedAmount, setDiscountedAmount] = useState(0);
   const [vatAmount, setVatAmount] = useState(0);
 
@@ -102,6 +103,7 @@ const Cashier = () => {
           inventoryDispatch({ type: "SET_INVENTORIES", payload: json });
           const response2 = await axiosPrivate.get("/api/restock/allRestocks");
         }
+
         setLoadingDialog({ isOpen: false });
       } catch (error) {
         setLoadingDialog({ isOpen: false });
@@ -162,18 +164,33 @@ const Cashier = () => {
               }, 0)
         )
       : setDiscountableAmount(0);
+    isDiscounted
+      ? setNonDiscountableAmount(
+          items &&
+            items
+              .filter((filter) => {
+                return filter.necessity === false;
+              })
+              .reduce((prev, curr) => {
+                return prev + curr?.productSum;
+              }, 0)
+        )
+      : setNonDiscountableAmount(0);
   }, [isDiscounted, items]);
   // * Get Discount Amount
+
   useEffect(() => {
     isDiscounted
       ? setDiscountedAmount(discountableAmount * discount)
       : setDiscountedAmount(0);
-    !isDiscounted ? setVatAmount(subTotal * vat - subTotal) : setVatAmount(0);
+    !isDiscounted
+      ? setVatAmount(subTotal * vat - subTotal)
+      : setVatAmount(nonDiscountableAmount * vat - nonDiscountableAmount);
   }, [isDiscounted, subTotal, discountableAmount]);
   // * Get Total Same Amount
   useEffect(() => {
     isDiscounted
-      ? setTotalSale(subTotal - discountedAmount)
+      ? setTotalSale(subTotal - discountedAmount + vatAmount)
       : setTotalSale(subTotal + vatAmount);
   });
   // * Get Changes from Tender Amount - Total Amount of sales

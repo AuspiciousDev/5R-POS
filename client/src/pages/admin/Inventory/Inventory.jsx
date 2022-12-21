@@ -251,9 +251,9 @@ const Inventory = () => {
 
     setConfirmDialog({
       isOpen: true,
-      title: `Are you sure to edit [${params?.row?.productName}]`,
+      title: `Are you sure to edit [${params?.row?.productName}] ${params?.row?._id}`,
       onConfirm: () => {
-        navigate(`edit/${params?.row._id}`);
+        navigate(`edit/${params?.row?._id}`);
       },
     });
   };

@@ -168,29 +168,6 @@ const Inventory = () => {
     },
   ];
 
-  const handleCellEditClick = (event, params) => {
-    event.stopPropagation();
-
-    setConfirmDialog({
-      isOpen: true,
-      title: `Are you sure to edit [${params?.row?.productName}]`,
-      onConfirm: () => {
-        navigate(`edit/${params?.row._id}`);
-      },
-    });
-  };
-  const handleCellDeleteClick = (event, params) => {
-    event.stopPropagation();
-
-    setConfirmDialog({
-      isOpen: true,
-      title: `Are you sure to delete [${params?.row?.productName}]`,
-      message: `This action is irreversible!`,
-      onConfirm: () => {
-        handleDelete({ val: params.row });
-      },
-    });
-  };
   useEffect(() => {
     const getData = async () => {
       try {

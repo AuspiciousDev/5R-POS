@@ -110,8 +110,12 @@ const InventoryUpdate = () => {
 
         const getItemData = await axiosPrivate.get(`/api/inventory/${_id}`);
         if (getItemData.status === 200) {
-          const json = await response.data;
-          setProductDetails(json[0]);
+          const json = await getItemData.data;
+          console.log(
+            "🚀 ~ file: InventoryUpdate.jsx:114 ~ getData ~ json",
+            json
+          );
+          setProductDetails(json);
         }
         setLoadingDialog({ isOpen: false });
       } catch (error) {
@@ -158,8 +162,11 @@ const InventoryUpdate = () => {
     setBrand(productDetails?.brand);
     setCategory(productDetails?.category);
     setSupplier(productDetails?.supplier);
-    setExpiredOn(productDetails?.expiredOn);
-    setIsFood(productDetails?.expiredOn ? false : true);
+    if (
+      productDetails?.expiredOn === "n/a"
+        ? setIsFood(true)
+        : setExpiredOn(productDetails?.expiredOn)
+    );
     setNecessity(productDetails?.necessity);
   }, [productDetails]);
   const handleSubmit = async (e) => {
